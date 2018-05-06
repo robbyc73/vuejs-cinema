@@ -17,7 +17,12 @@
     <div id="title">
         <img src="/public/logo.png">
         <h1>Vue.js Cinema</h1>
-        {{msg}}
+    </div>
+    <div id="overview">
+        <div id="main">
+            <movie-list></movie-list>
+            <movie-filter @check-filter="checkFilter"></movie-filter>
+        </div>
     </div>
 </div>
 <script src="/dist/build.js"></script>
