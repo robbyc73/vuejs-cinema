@@ -4,36 +4,110 @@ import genres from './util/genres';
 
 new Vue({
    el: '#app',
+   data: {
+     genre: [],
+     time: []
+   },
+
     components: {
        'movie-list': {
            template: `<div id="movie-list">
-                       <div v-for="movie in movies">{{movie.title}}</div>
+                       <div v-for="movie in filteredMovies">{{movie.title}}</div>
                      </div>`,
+           props: {
+               genre: {
+                   type:Array,
+                   'default': []
+               },
+               time: {
+                   type: Array,
+                   'default': []
+               }
+           },
            data: function () {
                return {
+                   genres,
                    movies: [
-                       {title: 'Pulp Fiction'},
-                       {title: 'Robocop'},
-                       {title: 'T2'}
-                   ]
+                       {
+                           title: 'Pulp Fiction',
+                           genre: [genres.CRIME, genres.COMEDY],
+                           time: ['0930','1330','1745']
+                       },
+                       {
+                           title: 'Robocop',
+                           genre: [genres.CRIME],
+                           time: ['1450','1850']
+                       },
+                       {
+                           title: 'T2',
+                           genre: [genres.HORROR],
+                           time: ['2315']
+                       }
+                   ],
                };
+           },
+           methods: {
+               movieHasCategory: function(category,movieCategory) {
+
+                   var hasCategoryMatches = 0;
+
+                   for(var i = 0; i< category.length; i++){
+                       for(var j = 0; j < movieCategory.length; j++){
+                           if (category[i] ==  movieCategory[j]) {
+                               hasCategoryMatches++;
+                           }
+                       }
+                   }
+
+                   return (hasCategoryMatches == category.length) ? true : false;
+               },
+
+              moviePassesGenreFilter(movie) {
+                   console.log("movie is "+movie.title);
+                   return true;
+                  /* if(!this.movies.length){
+                       return true;
+                   } else {*/
+                       return this.genre.find(genre => movie.genre === genre);
+                  // }
+              },
+              moviePassesTimeFilter(movie){
+                   return this.time.find(time => movie.time === time);
+              }
+           },
+           computed: {
+               noFilterSelected: function() {
+                   return this.time.length == 0 && this.genre.length == 0;
+               },
+               filteredMovies: function() {
+                   var filteredMovies = this.movies.filter(this.moviePassesGenreFilter);
+                   console.log("count movies is "+filteredMovies.length);
+                   return this.movies.filter(this.moviePassesGenreFilter);
+               }
            }
        },
+
         'movie-filter': {
            data() {
                return {
-                   genres
+                   genres,
+                   times: ['0930','1330','1450','1745','1850','2315']
                };
            },
            template: `<div id="movie-filter">
                         <h2>Filter Results</h2>
+                        <h3>By Genre</h3>
                         <div class="filter-group">
-                            <check-filter @check-filter="checkFilter" v-for="genre in genres" :title="genre"></check-filter>
+                            <check-filter @check-filter="checkFilter" v-for="genre in genres" :title="genre" :category="'genre'"></check-filter>
+                        </div>
+                        <h3>By Time</h3>
+                        <div class="filter-group">
+                            <check-filter @check-filter="checkFilter" v-for="time in times" :title="time" :category="'time'"></check-filter>
                         </div>
                         </div>`,
            components: {
                'check-filter': {
-                   props: ['title'],
+                   props: ['title','category'],
                    data() {
                        return {
                                checked: false
@@ -46,35 +120,31 @@ new Vue({
                    methods: {
                        checkFilter() {
                            this.checked = !this.checked;
-                           console.log("first check filter");
-                           this.$emit('check-filter');
+                           this.$emit('check-filter',this.category,this.title,this.checked);
                        },
-                       /*emitEvent() {
-
-                           this.filterObj.checked = !this.filterObj.checked;
-                           this.filterObj.filter = title;
-                           console.log("first emit");
-                           this.$emit('toParent',this.filterObj.checked);
-                       }*/
                    }
 
                }
            },
             methods: {
-               checkFilter() {
-                   console.log("second check filter");
-                   this.$emit('check-filter');
+               checkFilter(category,title,checked) {
+                   this.$emit('check-filter',category,title,checked);
                },
-               /* emitTopEvent(filterObj){
-                    console.log("second emit");
-                    this.$emit('toTopParent',filterObj);
-               }*/
             }
         }
     },
     methods: {
-        checkFilter() {
-            console.log("value of filterObj ");
+        checkFilter(category,title,checked) {
+
+            if(checked) {
+                this[category].push(title);
+            } else {
+                let index = this[category].indexOf(title);
+                if(index > -1){
+                    this[category].splice(index,1);
+                }
+            }
+
         }
     }
 
