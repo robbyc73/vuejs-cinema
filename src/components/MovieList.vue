@@ -1,14 +1,38 @@
 <template>
     <div id="movie-list">
-        <div v-for="movie in filteredMovies" class="movie">{{movie.title}}</div>
+        <div v-for="movie in filteredMovies" class="movie">
+            <div><img :src="movie.movie.Poster"></div>
+            <div class="movie-col-right">
+                <div class="movie-title">
+                    <h2>
+                    {{movie.movie.Title}}
+                    </h2>
+                </div>
+                <div class="movie-rating" v-for="Rating in movie.movie.Ratings">
+                    <h4>{{ Rating.Source }} - {{ Rating.Value }}</h4>
+                </div>
+                <div class="movie-sessions">
+                    <div class="tooltip-show session-time-wrapper" v-for="session in movie.sessions">
+                        <button
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                :title="session.seats|seatsForASession"
+                                class="session-time movie-title"
+                        >{{session.time|displayFormattedTime}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 <script>
     import genres from '../util/genres';
+    import moment from 'moment';
     export default {
         name: 'movie-list',
-        props: ['genre', 'time'],
-        data: function () {
+        props: ['genre', 'time', 'movies'],
+        /*data: function () {
             return {
                 movies: [
                     {
@@ -28,7 +52,7 @@
                     }
                 ],
             };
-        },
+        },*/
         methods: {
             movieHasCategory: function (category, movieCategory) {
 
@@ -50,14 +74,24 @@
                     return true;
                 }
 
-                return this.genre.find(genre => genre === movie.genre);
+                var movieGenres = movie.movie.Genre.split(',');
+
+                var foundGenre = 0;
+
+                for(var i = 0; i < movieGenres.length; i++) {
+                    if(this.genre.find(genre => genre === movieGenres[i])) {
+                        foundGenre++;
+                    }
+                }
+
+                return (foundGenre > 0) ? true : false;
             },
             moviePassesTimeFilter(movie) {
                 if (!this.genre.length) {
                     return true;
                 }
                 return this.time.find(time => time === movie.time);
-            }
+            },
         },
         computed: {
             noFilterSelected: function () {
@@ -69,6 +103,15 @@
                 return filteredByGenre.concat(filteredByTime.filter(function (item) {
                     return filteredByGenre.indexOf(item) < 0;
                 }));
+            },
+
+        },
+        filters: {
+            displayFormattedTime: function(value) {
+                return moment(value).format('h:mma')
+            },
+            seatsForASession: function(seats) {
+                return seats+' available';
             }
         }
     }
