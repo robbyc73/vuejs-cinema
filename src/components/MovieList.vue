@@ -1,74 +1,46 @@
 <template>
     <div id="movie-list">
-        <div v-for="movie in filteredMovies" class="movie">
-            <div><img :src="movie.movie.Poster"></div>
-            <div class="movie-col-right">
-                <div class="movie-title">
-                    <h2>
-                    {{movie.movie.Title}}
-                    </h2>
-                </div>
-                <div class="movie-rating" v-for="Rating in movie.movie.Ratings">
-                    <h4>{{ Rating.Source }} - {{ Rating.Value }}</h4>
-                </div>
-                <div class="movie-sessions">
-                    <div class="tooltip-show session-time-wrapper" v-for="session in movie.sessions">
-                        <button
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                :title="session.seats|seatsForASession"
-                                class="session-time movie-title"
-                        >{{session.time|displayFormattedTime}}
-                        </button>
-                    </div>
-                </div>
-            </div>
+        <div v-for="movie in filteredMovies">
+            <movie-item :movie="movie.movie"
+                        :sessions="filteredSessions(movie.sessions)"
+                        :day="day"
+                        :time="time">
+            </movie-item>
+        </div>
+        <div class="no-results" v-if="filteredMovies.length == 0">
+            {{ noResultsFound }}
         </div>
     </div>
 </template>
 <script>
     import genres from '../util/genres';
-    import moment from 'moment';
+    import times from '../util/times';
+    import MovieItem from './MovieItem.vue';
     export default {
         name: 'movie-list',
-        props: ['genre', 'time', 'movies'],
-        /*data: function () {
-            return {
-                movies: [
-                    {
-                        title: 'Pulp Fiction',
-                        genre: genres.COMEDY,
-                        time: '0930'
-                    },
-                    {
-                        title: 'Robocop',
-                        genre: genres.CRIME,
-                        time: '1450'
-                    },
-                    {
-                        title: 'T2',
-                        genre: genres.HORROR,
-                        time: '2315'
-                    }
-                ],
-            };
-        },*/
-        methods: {
-            movieHasCategory: function (category, movieCategory) {
-
-                var hasCategoryMatches = 0;
-
-                for (var i = 0; i < category.length; i++) {
-                    for (var j = 0; j < movieCategory.length; j++) {
-                        if (category[i] == movieCategory[j]) {
-                            hasCategoryMatches++;
-                        }
-                    }
-                }
-
-                return (hasCategoryMatches == category.length) ? true : false;
+        components: {
+            MovieItem
+        },
+        props: {
+            genre: {
+                type: Array,
+                'default': ''
             },
+            time: {
+                type: Array,
+                'default': ''
+            },
+            movies: {
+                type: Array,
+                'default': ''
+            },
+            day: {
+                type: Object,
+                'default': ''
+            },
+        },
 
+        methods: {
             moviePassesGenreFilter(movie) {
                 if (!this.genre.length) {
                     return true;
@@ -86,33 +58,57 @@
 
                 return (foundGenre > 0) ? true : false;
             },
-            moviePassesTimeFilter(movie) {
-                if (!this.genre.length) {
-                    return true;
-                }
-                return this.time.find(time => time === movie.time);
-            },
-        },
-        computed: {
-            noFilterSelected: function () {
-                return this.time.length == 0 && this.genre.length == 0;
-            },
-            filteredMovies: function () {
-                var filteredByGenre = this.movies.filter(this.moviePassesGenreFilter);
-                var filteredByTime = this.movies.filter(this.moviePassesTimeFilter);
-                return filteredByGenre.concat(filteredByTime.filter(function (item) {
-                    return filteredByGenre.indexOf(item) < 0;
-                }));
+            sessionInSelectedDay(session){
+                let sessionTime = this.$moment(session.time).format('YYYY-MM-DD');
+                let currentDay = this.getCurrentDay();
+                return (sessionTime == currentDay);
             },
 
-        },
-        filters: {
-            displayFormattedTime: function(value) {
-                return moment(value).format('h:mma')
+            getCurrentDay()
+            {
+                let currDay = this.$moment(this.day).format('YYYY-MM-DD');
+                return currDay;
             },
-            seatsForASession: function(seats) {
-                return seats+' available';
+            sessionPassesTimeFilter: function(session){
+                if(!this.sessionInSelectedDay(session)) {
+                    return false;
+                } else if (this.time.length == 0 || this.time.length == 2){
+                    return true;
+                } else if(this.time[0] === times.AFTER_6PM) {
+                    return this.$moment(session.time).hour() >= 18;
+                } else if(this.time[0] === times.BEFORE_6PM) {
+                    return this.$moment(session.time).hour() < 18;
+                }
+
+                return true;
+            },
+            filteredSessions: function(sessions) {
+                return sessions.filter(session => {
+                    return this.$moment(session.time).isSame(this.day,'day') && this.sessionPassesTimeFilter(session);
+                });
             }
-        }
+        },
+        computed: {
+            filteredMovies: function () {
+                return this.movies
+                    .filter(this.moviePassesGenreFilter)
+                    .filter(movie => movie.sessions.find(this.sessionPassesTimeFilter));
+            },
+            noResultsFound: function() {
+                let noResultStr =  'No results found';
+
+                if(this.genre.length >0) {
+                    noResultStr += ' for genre(s) '+this.genre.join(', ');
+                }
+
+                if(this.time.length > 0) {
+                    noResultStr += ' and time(s) '+this.time.join(', ');
+                }
+
+                return noResultStr;
+            }
+
+
+        },
     }
 </script>

@@ -1,22 +1,33 @@
 import Vue from 'vue';
 import './style.scss';
+import VueResource from 'vue-resource';
+Vue.use(VueResource);
 import MovieList from './components/MovieList.vue';
 import MovieFilter from './components/MovieFilter.vue';
-import VueResource from 'vue-resource';
+import MovieItem from './components/MovieItem.vue';
 
-Vue.use(VueResource);
+import moment from 'moment-timezone';
+moment.tz.setDefault("UTC");
+Object.defineProperty(Vue.prototype,'$moment', { get() { return this.$root.moment} });
+import lodash from 'lodash';
+//Object.defineProperty(Vue.prototype,'$lodash', { get() { return this.$root.lodash} });
+
 
 new Vue({
    el: '#app',
    data: {
      genre: [],
      time: [],
-     movies: []
+     movies: [],
+     moment,
+     lodash,
+     day: moment(),
    },
 
     components: {
         MovieList,
-        MovieFilter
+        MovieFilter,
+        MovieItem
     },
     methods: {
         checkFilter(category,title,checked) {
@@ -30,7 +41,7 @@ new Vue({
                 }
             }
 
-        }
+        },
     },
     created(){
        this.$http.get('/api').then(response => {
@@ -38,7 +49,12 @@ new Vue({
        });
 
 
+
+
     }
 
 
 });
+
+//Object.defineProperty(Vue.prototype,'$moment', { get() { return this.$root.moment} });
+//Object.defineProperty(Vue.prototype,'$lodash', { get() { return this.$root.lodash} });

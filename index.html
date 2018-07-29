@@ -21,7 +21,11 @@
     </div>
     <div id="overview">
         <div id="main">
-            <movie-list :movies="movies" :genre="genre" :time="time"></movie-list>
+            <movie-list :day="day"
+                        :movies="movies"
+                        :genre="genre"
+                        :time="time">
+            </movie-list>
             <movie-filter @check-filter="checkFilter"></movie-filter>
         </div>
     </div>
