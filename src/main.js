@@ -10,7 +10,9 @@ import moment from 'moment-timezone';
 moment.tz.setDefault("UTC");
 Object.defineProperty(Vue.prototype,'$moment', { get() { return this.$root.moment} });
 import lodash from 'lodash';
-//Object.defineProperty(Vue.prototype,'$lodash', { get() { return this.$root.lodash} });
+
+const bus = new Vue();
+Object.defineProperty(Vue.prototype,'$bus', { get() { return this.$root.bus} });
 
 
 new Vue({
@@ -22,6 +24,7 @@ new Vue({
      moment,
      lodash,
      day: moment(),
+     bus
    },
 
     components: {
@@ -48,7 +51,7 @@ new Vue({
            this.movies = response.body;
        });
 
-
+       this.$bus.$on('check-filter',this.checkFilter)
 
 
     }

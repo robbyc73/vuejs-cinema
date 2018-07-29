@@ -21,7 +21,6 @@
             return {
                 genres,
                 times
-                /*times: ['1:15 PM','4:30 PM','9:30 PM','1:30 PM','2:50 PM','4:15 PM','5:30 PM','5:45 PM','6:30 PM','6:50 PM','11:15 PM']*/
             };
         },
         components: {
@@ -30,7 +29,7 @@
         methods: {
             checkFilter(category,title,checked) {
                 this.checked = !this.checked;
-                this.$emit('check-filter',category,title,checked);
+                this.$bus.$emit('check-filter',category,title,checked);
             },
         }
     }
