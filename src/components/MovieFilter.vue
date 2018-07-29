@@ -3,11 +3,11 @@
         <h2>Filter Results</h2>
         <h3>By Genre</h3>
         <div class="filter-group">
-            <check-filter @check-filter="checkFilter" v-for="genre in genres" :title="genre" category="genre"></check-filter>
+            <check-filter v-for="genre in genres" :title="genre" category="genre"></check-filter>
         </div>
         <h3>By Time</h3>
         <div class="filter-group">
-            <check-filter @check-filter="checkFilter" v-for="time in times" :title="time" category="time"></check-filter>
+            <check-filter v-for="time in times" :title="time" category="time"></check-filter>
         </div>
     </div>
 </template>
@@ -26,11 +26,5 @@
         components: {
             CheckFilter
         },
-        methods: {
-            checkFilter(category,title,checked) {
-                this.checked = !this.checked;
-                this.$bus.$emit('check-filter',category,title,checked);
-            },
-        }
     }
 </script>
