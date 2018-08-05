@@ -19,16 +19,12 @@
         <img src="/public/logo.png">
         <h1>Vue.js Cinema</h1>
     </div>
-    <div id="overview">
-        <div id="main">
-            <movie-list :day="day"
-                        :movies="movies"
-                        :genre="genre"
-                        :time="time">
-            </movie-list>
-            <movie-filter></movie-filter>
-        </div>
-    </div>
+<router-view :day="day"
+          :movies="movies"
+          :genre="genre"
+          :time="time"
+>
+</router-view>
 </div>
 <script src="/dist/build.js"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

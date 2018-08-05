@@ -2,62 +2,45 @@ import Vue from 'vue';
 import './style.scss';
 import VueResource from 'vue-resource';
 Vue.use(VueResource);
-import MovieList from './components/MovieList.vue';
-import MovieFilter from './components/MovieFilter.vue';
-import MovieItem from './components/MovieItem.vue';
 
 import moment from 'moment-timezone';
 moment.tz.setDefault("UTC");
 Object.defineProperty(Vue.prototype,'$moment', { get() { return this.$root.moment} });
 import lodash from 'lodash';
 
+import { checkFilter } from "./util/bus";
+
 const bus = new Vue();
 Object.defineProperty(Vue.prototype,'$bus', { get() { return this.$root.bus} });
 
+import VueRouter from 'vue-router';
+Vue.use(VueRouter);
+
+
+import routes  from './util/routes';
+
+const router = new VueRouter({
+   routes
+});
 
 new Vue({
    el: '#app',
-   data: {
-     genre: [],
-     time: [],
-     movies: [],
-     moment,
-     lodash,
-     day: moment(),
-     bus
-   },
-
-    components: {
-        MovieList,
-        MovieFilter,
-        MovieItem
-    },
-    methods: {
-        checkFilter(category,title,checked) {
-
-            if(checked) {
-                this[category].push(title);
-            } else {
-                let index = this[category].indexOf(title);
-                if(index > -1){
-                    this[category].splice(index,1);
-                }
-            }
-
-        },
+    data: {
+        genre: [],
+        time: [],
+        movies: [],
+        moment,
+        lodash,
+        day: moment(),
+        bus
     },
     created(){
-       this.$http.get('/api').then(response => {
-           this.movies = response.body;
-       });
+        this.$http.get('/api').then(response => {
+            this.movies = response.body;
+        });
 
-       this.$bus.$on('check-filter',this.checkFilter)
-
-
-    }
-
-
+        //use bind to pass through context to function in bus file
+        this.$bus.$on('check-filter',checkFilter.bind(this))
+    },
+    router
 });
-
-//Object.defineProperty(Vue.prototype,'$moment', { get() { return this.$root.moment} });
-//Object.defineProperty(Vue.prototype,'$lodash', { get() { return this.$root.lodash} });

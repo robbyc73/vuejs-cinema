@@ -1,10 +1,18 @@
 <template>
     <div id="movie-list">
         <div v-for="movie in filteredMovies">
-            <movie-item :movie="movie.movie"
-                        :sessions="filteredSessions(movie.sessions)"
-                        :day="day"
-                        :time="time">
+            <movie-item :movie="movie.movie">
+                <div class="movie-sessions">
+                    <div class="tooltip-show session-time-wrapper" v-for="session in filteredSessions(movie.sessions)">
+                        <button
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                :title="session.seats|seatsForASession"
+                                class="session-time movie-title"
+                        >{{displayFormattedTime(session.time)}}
+                        </button>
+                    </div>
+                </div>
             </movie-item>
         </div>
         <div class="no-results" v-if="filteredMovies.length == 0">
@@ -18,9 +26,6 @@
     import MovieItem from './MovieItem.vue';
     export default {
         name: 'movie-list',
-        components: {
-            MovieItem
-        },
         props: {
             genre: {
                 type: Array,
@@ -38,6 +43,9 @@
                 type: Object,
                 'default': ''
             },
+        },
+        components: {
+            MovieItem
         },
 
         methods: {
@@ -86,7 +94,10 @@
                 return sessions.filter(session => {
                     return this.$moment(session.time).isSame(this.day,'day') && this.sessionPassesTimeFilter(session);
                 });
-            }
+            },
+            displayFormattedTime: function(value) {
+                return this.$moment(value).format('h:mm A');
+            },
         },
         computed: {
             filteredMovies: function () {
@@ -106,9 +117,12 @@
                 }
 
                 return noResultStr;
+            },
+        },
+        filters: {
+            seatsForASession: function(seats) {
+                return seats+' available';
             }
-
-
         },
     }
 </script>
