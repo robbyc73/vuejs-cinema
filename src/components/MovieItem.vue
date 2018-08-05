@@ -6,8 +6,9 @@
             <h2>
                 {{movie.Title}}
             </h2>
+            <span class="movie-rating">{{movie.Rated}}</span>
         </div>
-        <div class="movie-rating" v-for="Rating in movie.Ratings">
+        <div v-for="Rating in movie.Ratings">
             <h4>{{ Rating.Source }} - {{ Rating.Value }}</h4>
         </div>
         <div class="movie-sessions">
