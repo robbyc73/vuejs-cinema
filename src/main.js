@@ -40,7 +40,8 @@ new Vue({
         });
 
         //use bind to pass through context to function in bus file
-        this.$bus.$on('check-filter',checkFilter.bind(this))
+        this.$bus.$on('check-filter',checkFilter.bind(this));
+        //this.$bus.$on('daySelect',daySelect.bind(this))
     },
     router
 });
