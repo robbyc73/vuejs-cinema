@@ -11,4 +11,9 @@ function checkFilter(category,title,checked) {
 
 }
 
-export { checkFilter };
+function daySelect(day) {
+    this.day = day;
+    console.log("day is "+this.$moment(day).format('DD-MM'));
+}
+
+export { checkFilter, daySelect };

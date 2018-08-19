@@ -43,6 +43,10 @@
                 type: Object,
                 'default': ''
             },
+            selectedDay: {
+                type: Object,
+                'default': ''
+            }
         },
         components: {
             MovieItem
@@ -68,14 +72,15 @@
             },
             sessionInSelectedDay(session){
                 let sessionTime = this.$moment(session.time).format('YYYY-MM-DD');
-                let currentDay = this.getCurrentDay();
-                return (sessionTime == currentDay);
+                let selectedDay = this.getSelectedDay();
+                return (sessionTime == selectedDay);
             },
 
-            getCurrentDay()
-            {
-                let currDay = this.$moment(this.day).format('YYYY-MM-DD');
-                return currDay;
+            getCurrentDay() {
+                return this.$moment(this.day).format('YYYY-MM-DD');
+            },
+            getSelectedDay() {
+               return this.$moment(this.selectedDay).format('YYYY-MM-DD');
             },
             sessionPassesTimeFilter: function(session){
                 if(!this.sessionInSelectedDay(session)) {
@@ -124,5 +129,8 @@
                 return seats+' available';
             }
         },
+        mounted() {
+            this.selectedDay = this.day;
+        }
     }
 </script>
