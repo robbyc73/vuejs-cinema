@@ -1,44 +1,26 @@
 <template>
     <div id="detail">
-        <div id="home">
-            <div class="movie-title">
-                <router-link to="/"><h2>Return To List</h2></router-link>
-            </div>
-        </div>
         <div class="movie">
-            <div v-if="movie" class="movie-details">
-                <movie-item :movie="movie.movie">
+            <div v-if="movie">
+                <movie-item :movie="movie">
+                    <div class="movie-details">
+                        <p class="movie-genre">{{ movie.Genre}}</p>
+                        <p class="movie-plot">{{ movie.Plot}}</p>
                     <table>
-                        <tr>
-                            <td>
-                                Plot
-                            </td>
-                            <td>
-                                {{ movie.movie.Plot}}
-                            </td>
-                        </tr>
                         <tr>
                             <td>
                                 Actors
                             </td>
                             <td>
-                                {{ movie.movie.Actors}}
+                                {{ movie.Actors}}
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                DVD Date
+                                Release Date
                             </td>
                             <td>
-                                {{ movie.movie.DVD}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Genre
-                            </td>
-                            <td>
-                                {{ movie.movie.Genre}}
+                                {{ movie.Released}}
                             </td>
                         </tr>
                         <tr>
@@ -46,11 +28,25 @@
                                 Director
                             </td>
                             <td>
-                                {{ movie.movie.Director}}
+                                {{ movie.Director}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Runtime
+                            </td>
+                            <td>
+                                {{ movie.Runtime}}
                             </td>
                         </tr>
                     </table>
+                    </div>
                 </movie-item>
+            </div>
+        </div>
+        <div id="home">
+            <div class="movie-title">
+                <router-link to="/"><h2>Back to Results</h2></router-link>
             </div>
         </div>
     </div>
@@ -83,7 +79,7 @@
             movie() {
                 let movie = this.movies.find(movie => movie.id == this.$route.params.imdbID);
 
-                return movie ? movie : null;
+                return movie ? movie.movie : null;
             }
         },
         methods: {

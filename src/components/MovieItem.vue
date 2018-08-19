@@ -22,7 +22,7 @@
         props: ['movie'],
         methods: {
             routerLink(movie) {
-                return 'movie/'+movie.imdbID;
+                return { name: 'movie', params: { imdbID: movie.imdbID }};
             }
         },
     }
