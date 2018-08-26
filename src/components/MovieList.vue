@@ -43,10 +43,6 @@
                 type: Object,
                 'default': ''
             },
-            selectedDay: {
-                type: Object,
-                'default': ''
-            }
         },
         components: {
             MovieItem
@@ -80,7 +76,7 @@
                 return this.$moment(this.day).format('YYYY-MM-DD');
             },
             getSelectedDay() {
-               return this.$moment(this.selectedDay).format('YYYY-MM-DD');
+               return this.$moment(this.day).format('YYYY-MM-DD');
             },
             sessionPassesTimeFilter: function(session){
                 if(!this.sessionInSelectedDay(session)) {
@@ -129,8 +125,5 @@
                 return seats+' available';
             }
         },
-        mounted() {
-            this.selectedDay = this.day;
-        }
     }
 </script>
