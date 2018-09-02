@@ -4,6 +4,10 @@
             <li :class="daySelected(day)" class="day day-selector" style="display: inline" v-for="day in days">
                 <a @click.prevent="showMoviesForDay(day)">{{formattedDay(day)}}</a>
             </li>
+            <li class="day-selector">
+                <span class="dec" @click="changeDay(-1)"></span>
+                <span class="inc" @click="changeDay(1)"></span>
+            </li>
         </ul>
     </div>
 </template>
@@ -33,8 +37,13 @@
             },
             daySelected(day) {
                 return day.format('YYYY-MM-DD') == this.day.format('YYYY-MM-DD') ? 'active' : '';
+            },
+            changeDay(amount) {
+                let newDay = this.$moment(this.day).add(amount,'days');
+                if(this.days.find(day => day.format('YYYY-MM-DD') === newDay.format('YYYY-MM-DD'))) {
+                    this.showMoviesForDay(newDay);
+                }
             }
-
         }
     }
 </script>
