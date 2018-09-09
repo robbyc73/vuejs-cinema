@@ -45,3 +45,17 @@ new Vue({
     },
     router
 });
+
+// example of a directive, purely for practise. easier to set data toggle and placement on the button for tooltip
+Vue.directive('tooltip', {
+    bind(el,bindings) {
+        let span = document.createElement('SPAN');
+        let text = document.createTextNode('Seats Available: '+bindings.value.seats);
+        span.appendChild(text);
+        span.className = 'tooltip';
+        span.dataset.toggle = 'tooltip';
+        span.dataset.placement = 'bottom';
+        span.dataset.title = 'Seats Available: '+bindings.value.seats;
+        el.appendChild(span);
+    }
+});

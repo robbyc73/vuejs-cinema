@@ -3,10 +3,9 @@
         <div v-for="movie in filteredMovies">
             <movie-item :movie="movie.movie">
                 <div class="movie-sessions">
-                    <div class="tooltip-show session-time-wrapper" v-for="session in filteredSessions(movie.sessions)">
-                        <button
-                                data-toggle="tooltip"
-                                data-placement="top"
+                    <div v-tooltip="{ seats: session.seats}" class="tooltip-show session-time-wrapper" v-for="session in filteredSessions(movie.sessions)">
+                        <button data-toggle="tooltip"
+                                data-placement="bottom"
                                 :title="session.seats|seatsForASession"
                                 class="session-time movie-title"
                         >{{displayFormattedTime(session.time)}}
