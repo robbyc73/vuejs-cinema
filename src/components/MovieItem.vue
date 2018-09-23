@@ -3,7 +3,8 @@
     <div class="movie-col-left"><router-link :to="routerLink(movie)"><img :src="movie.Poster"></router-link></div>
     <div class="movie-item movie-col-right">
         <div class="movie-title">
-            <router-link :to="routerLink(movie)"><h2>{{movie.Title}}</h2></router-link>
+                <router-link :to="routerLink(movie)"><h2>{{movie.Title}}</h2></router-link>
+
             <span class="movie-rating">{{movie.Rated}}</span>
         </div>
         <div v-for="Rating in movie.Ratings">
